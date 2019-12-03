@@ -51,10 +51,11 @@ class ParentRuntime
     /**
      * @param \Spatie\Async\Task|callable $task
      * @param int|null $outputLength
+     * @param string|null $php
      *
      * @return \Spatie\Async\Process\Runnable
      */
-    public static function createProcess($task, ?int $outputLength = null): Runnable
+    public static function createProcess($task, ?int $outputLength = null, $php = 'php'): Runnable
     {
         if (! self::$isInitialised) {
             self::init();
@@ -65,7 +66,7 @@ class ParentRuntime
         }
 
         $process = new Process([
-            'php',
+            $php,
             self::$childProcessScript,
             self::$autoloader,
             self::encodeTask($task),

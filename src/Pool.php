@@ -17,6 +17,7 @@ class Pool implements ArrayAccess
     protected $tasksPerProcess = 1;
     protected $timeout = 300;
     protected $sleepTime = 50000;
+    protected $php = "php";
 
     /** @var \Spatie\Async\Process\Runnable[] */
     protected $queue = [];
@@ -60,6 +61,13 @@ class Pool implements ArrayAccess
             function_exists('pcntl_async_signals')
             && function_exists('posix_kill')
             && ! self::$forceSynchronous;
+    }
+
+    public function php(string $php): self
+    {
+        $this->php = $php;
+
+        return $this;
     }
 
     public function concurrency(int $concurrency): self
@@ -118,7 +126,7 @@ class Pool implements ArrayAccess
         }
 
         if (! $process instanceof Runnable) {
-            $process = ParentRuntime::createProcess($process, $outputLength);
+            $process = ParentRuntime::createProcess($process, $outputLength, $this->php);
         }
 
         $this->putInQueue($process);
